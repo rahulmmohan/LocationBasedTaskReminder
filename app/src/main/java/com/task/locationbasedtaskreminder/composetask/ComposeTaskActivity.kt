@@ -1,12 +1,13 @@
 package com.task.locationbasedtaskreminder.composetask
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import com.google.android.material.snackbar.Snackbar
 import com.task.locationbasedtaskreminder.R
 import kotlinx.android.synthetic.main.activity_compose_task.*
 
@@ -48,7 +49,13 @@ class ComposeTaskActivity : AppCompatActivity() {
         if (title.isEmpty() || location.isEmpty()) {
             Snackbar.make(coordinator, R.string.error_empty, Snackbar.LENGTH_LONG).show()
         } else {
-
+            composeTaskViewModel.createTask(title, location, lat, lon).observe(this, Observer {
+                if (it > -1) {
+                    exitCompose()
+                } else {
+                    Snackbar.make(coordinator, "Something went wrong!", Snackbar.LENGTH_LONG).show()
+                }
+            })
         }
     }
 
