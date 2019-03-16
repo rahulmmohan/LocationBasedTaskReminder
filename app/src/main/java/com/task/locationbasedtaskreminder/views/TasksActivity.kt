@@ -28,6 +28,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.task.locationbasedtaskreminder.R
 import com.task.locationbasedtaskreminder.data.Task
+import com.task.locationbasedtaskreminder.helper.LocationService
 import com.task.locationbasedtaskreminder.helper.isNearToCurrentLocation
 import com.task.locationbasedtaskreminder.viewmodel.GPSTrackerViewModel
 import com.task.locationbasedtaskreminder.viewmodel.TasksViewModel
@@ -65,6 +66,18 @@ class TasksActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        val serviceIntent = Intent(this@TasksActivity, LocationService::class.java)
+        startService(serviceIntent)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val serviceIntent = Intent(this@TasksActivity, LocationService::class.java)
+        stopService(serviceIntent)
+    }
+
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         mMap?.let {
@@ -82,11 +95,13 @@ class TasksActivity : AppCompatActivity(), OnMapReadyCallback {
                     val lat = task.latitude.toDoubleOrNull()
                     val lon = task.longitude.toDoubleOrNull()
                     if (lat != null && lon != null) {
-                        val sydney = LatLng(lat, lon)
-                        mMap?.addMarker(MarkerOptions()
-                            .position(sydney)
-                            .title(task.title)
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_event_note_red_600_24dp)))
+                        val place = LatLng(lat, lon)
+                        mMap?.addMarker(
+                            MarkerOptions()
+                                .position(place)
+                                .title(task.title)
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_event_note_red_600_24dp))
+                        )
                     }
                 }
             }
@@ -97,8 +112,8 @@ class TasksActivity : AppCompatActivity(), OnMapReadyCallback {
         Log.e("Location", "getLocation Called ... ")
         locationViewModel.location.observe(this, Observer { location ->
             if (location != null) {
-                Log.e("MainActivity", "latitude -> ${location.latitude}")
-                Log.e("MainActivity", "longitude -> ${location.longitude}")
+                Log.e("TaskActivity", "latitude -> ${location.latitude}")
+                Log.e("TaskActivity", "longitude -> ${location.longitude}")
                 mMap?.let {
                     it.animateCamera(
                         CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), 15.0f)
@@ -237,5 +252,6 @@ class TasksActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
     }
+
 
 }

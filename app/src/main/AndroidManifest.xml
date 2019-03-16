@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools" package="com.task.locationbasedtaskreminder">
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <application
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
@@ -36,6 +36,8 @@
         <activity android:name=".views.ComposeTaskActivity"
                   android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <service android:name=".helper.LocationService"/>
+        <receiver android:name=".helper.TaskActionReceiver"/>
     </application>
 
 </manifest>
