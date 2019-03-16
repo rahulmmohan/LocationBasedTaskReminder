@@ -1,6 +1,6 @@
 package com.task.locationbasedtaskreminder.composetask
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 
 class ComposeTaskViewModel : ViewModel() {
 
