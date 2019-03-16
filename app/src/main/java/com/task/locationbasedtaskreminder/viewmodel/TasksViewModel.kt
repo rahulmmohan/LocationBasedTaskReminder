@@ -8,8 +8,12 @@ import androidx.lifecycle.MutableLiveData
 import com.task.locationbasedtaskreminder.data.AppDatabase
 import com.task.locationbasedtaskreminder.data.Task
 
-class ComposeTaskViewModel(@NonNull application: Application) : AndroidViewModel(application) {
+class TasksViewModel(@NonNull application: Application) : AndroidViewModel(application) {
     var db: AppDatabase = AppDatabase.getInstance(application.applicationContext)
+
+    fun getAllTasks(): LiveData<List<Task>> {
+        return db.taskDao().getAll()
+    }
 
     fun createTask(title: String, place: String, lat: String, lon: String): LiveData<Long> {
         val task = Task()

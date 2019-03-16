@@ -9,12 +9,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
 import com.task.locationbasedtaskreminder.R
-import com.task.locationbasedtaskreminder.viewmodel.ComposeTaskViewModel
+import com.task.locationbasedtaskreminder.viewmodel.TasksViewModel
 import kotlinx.android.synthetic.main.activity_compose_task.*
 
 class ComposeTaskActivity : AppCompatActivity() {
 
-    private lateinit var composeTaskViewModel: ComposeTaskViewModel
+    private lateinit var taskViewModel: TasksViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,7 +24,7 @@ class ComposeTaskActivity : AppCompatActivity() {
             it.setDisplayHomeAsUpEnabled(true)
             it.title = "Create a new task"
         }
-        composeTaskViewModel = ViewModelProviders.of(this).get(ComposeTaskViewModel::class.java)
+        taskViewModel = ViewModelProviders.of(this).get(TasksViewModel::class.java)
 
     }
 
@@ -50,9 +50,9 @@ class ComposeTaskActivity : AppCompatActivity() {
         if (title.isEmpty() || location.isEmpty()) {
             Snackbar.make(coordinator, R.string.error_empty, Snackbar.LENGTH_LONG).show()
         } else {
-            composeTaskViewModel.createTask(title, location, lat, lon).observe(this, Observer {
+            taskViewModel.createTask(title, location, lat, lon).observe(this, Observer {
                 if (it > -1) {
-                    exitCompose()
+                    finish()
                 } else {
                     Snackbar.make(coordinator, "Something went wrong!", Snackbar.LENGTH_LONG).show()
                 }
