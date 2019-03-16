@@ -1,4 +1,4 @@
-package com.task.locationbasedtaskreminder.composetask
+package com.task.locationbasedtaskreminder.viewmodel
 
 import android.app.Application
 import androidx.annotation.NonNull

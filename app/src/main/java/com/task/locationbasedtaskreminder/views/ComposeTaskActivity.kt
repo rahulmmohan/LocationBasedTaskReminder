@@ -1,4 +1,4 @@
-package com.task.locationbasedtaskreminder.composetask
+package com.task.locationbasedtaskreminder.views
 
 import android.os.Bundle
 import android.view.Menu
@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
 import com.task.locationbasedtaskreminder.R
+import com.task.locationbasedtaskreminder.viewmodel.ComposeTaskViewModel
 import kotlinx.android.synthetic.main.activity_compose_task.*
 
 class ComposeTaskActivity : AppCompatActivity() {
