@@ -1,5 +1,6 @@
 package com.task.locationbasedtaskreminder.composetask
 
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AlertDialog
@@ -11,6 +12,8 @@ import kotlinx.android.synthetic.main.activity_compose_task.*
 
 class ComposeTaskActivity : AppCompatActivity() {
 
+    private lateinit var composeTaskViewModel: ComposeTaskViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_compose_task)
@@ -19,6 +22,8 @@ class ComposeTaskActivity : AppCompatActivity() {
             it.setDisplayHomeAsUpEnabled(true)
             it.title = "Create a new task"
         }
+        composeTaskViewModel = ViewModelProviders.of(this).get(ComposeTaskViewModel::class.java)
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -36,10 +41,14 @@ class ComposeTaskActivity : AppCompatActivity() {
     }
 
     private fun saveNote() {
-        val titleText = titleEditLayout.editText?.text.toString()
-        if (titleText.isEmpty()) {
+        val title = titleEditLayout.editText?.text.toString()
+        val location = LocationEditLayout.editText?.text.toString()
+        val lat = latitudeEditLayout.editText?.text.toString()
+        val lon = longitudeEditLayout.editText?.text.toString()
+        if (title.isEmpty() || location.isEmpty()) {
             Snackbar.make(coordinator, R.string.error_empty, Snackbar.LENGTH_LONG).show()
         } else {
+
         }
     }
 
@@ -51,5 +60,9 @@ class ComposeTaskActivity : AppCompatActivity() {
         ) { dialog, _ -> dialog.dismiss();finish() }
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NO") { dialog, _ -> dialog.dismiss() }
         alertDialog.show()
+    }
+
+    override fun onBackPressed() {
+        exitCompose()
     }
 }
