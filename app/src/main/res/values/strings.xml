@@ -2,4 +2,6 @@
     <string name="app_name">LocationBasedTaskReminder</string>
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="discard">Discard changes?</string>
+    <string name="error_empty">Fields can\'t be empty!</string>
 </resources>
