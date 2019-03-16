@@ -21,7 +21,7 @@ class Task {
     @ColumnInfo(name = "longitude")
     var longitude: String = ""
 
-    @ColumnInfo(name = "Done")
+    @ColumnInfo(name = "isDone")
     var isDone: Boolean = false
 
 }

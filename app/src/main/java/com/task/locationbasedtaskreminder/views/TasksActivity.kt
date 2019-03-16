@@ -23,9 +23,12 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.task.locationbasedtaskreminder.R
+import com.task.locationbasedtaskreminder.data.Task
+import com.task.locationbasedtaskreminder.helper.isNearToCurrentLocation
 import com.task.locationbasedtaskreminder.viewmodel.GPSTrackerViewModel
 import com.task.locationbasedtaskreminder.viewmodel.TasksViewModel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -40,6 +43,7 @@ class TasksActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var taskViewModel: TasksViewModel
     private lateinit var locationViewModel: GPSTrackerViewModel
     private var googleApiClient: GoogleApiClient? = null
+    private val mAllTasks = ArrayList<Task>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,34 +59,74 @@ class TasksActivity : AppCompatActivity(), OnMapReadyCallback {
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
         if (checkPermission()) {
-            callLocation()
+            mapFragment.getMapAsync(this)
+            getLocation()
         }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        getTasks()
+        mMap?.let {
+            it.setMyLocationEnabled(true)
+            getTasks()
+        }
     }
 
     //12.8327514,77.6548859
     private fun getTasks() {
         taskViewModel.getAllTasks().observe(this, Observer { tasks ->
             tasks?.let {
-                for (task in it) {
+                mAllTasks.addAll(tasks)
+                for (task in mAllTasks) {
                     val lat = task.latitude.toDoubleOrNull()
                     val lon = task.longitude.toDoubleOrNull()
-                    if (mMap != null && lat != null && lon != null) {
+                    if (lat != null && lon != null) {
                         val sydney = LatLng(lat, lon)
-                        mMap?.addMarker(MarkerOptions().position(sydney).title(task.title))
+                        mMap?.addMarker(MarkerOptions()
+                            .position(sydney)
+                            .title(task.title)
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_event_note_red_600_24dp)))
                     }
                 }
             }
         })
     }
 
-    private fun enableLoc() {
+    private fun getLocation() {
+        Log.e("Location", "getLocation Called ... ")
+        locationViewModel.location.observe(this, Observer { location ->
+            if (location != null) {
+                Log.e("MainActivity", "latitude -> ${location.latitude}")
+                Log.e("MainActivity", "longitude -> ${location.longitude}")
+                mMap?.let {
+                    it.animateCamera(
+                        CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), 15.0f)
+                    )
+                }
+                for (task in mAllTasks) {
+                    val lat = task.latitude.toDoubleOrNull()
+                    val lon = task.longitude.toDoubleOrNull()
+                    if (lat != null && lon != null) {
+                        if (isNearToCurrentLocation(location.latitude, location.longitude, lat, lon)) {
+                            Toast.makeText(this@TasksActivity, "notiiii", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
+
+            }
+        })
+        locationViewModel.getLocation()
+        // check if GPS enabled
+        if (!locationViewModel.canGetLocation()) {
+            // can't get location
+            // GPS or Network is not enabled
+            // Ask user to enable GPS/network in settings
+            enableLocation()
+        }
+    }
+
+    private fun enableLocation() {
         if (googleApiClient == null) {
             googleApiClient = GoogleApiClient.Builder(this@TasksActivity)
                 .addApi(LocationServices.API)
@@ -134,29 +178,6 @@ class TasksActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-
-    private fun callLocation() {
-        Log.e("Location", "callLocation Called ... ")
-        locationViewModel.location.observe(this, Observer { t ->
-            if (t != null) {
-                Log.e("MainActivity", "latitude -> ${t.latitude}")
-                Log.e("MainActivity", "longitude -> ${t.longitude}")
-                mMap?.let {
-                     it.animateCamera(CameraUpdateFactory.
-                         newLatLngZoom(LatLng(t.latitude, t.longitude), 12.0f))
-                }
-            }
-        })
-        locationViewModel.getLocation()
-        // check if GPS enabled
-        if (!locationViewModel.canGetLocation()) {
-            // can't get location
-            // GPS or Network is not enabled
-            // Ask user to enable GPS/network in settings
-            enableLoc()
-        }
-    }
-
     private fun checkPermission(): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val permissionCheck = ContextCompat.checkSelfPermission(
@@ -182,7 +203,7 @@ class TasksActivity : AppCompatActivity(), OnMapReadyCallback {
         when (requestCode) {
             REQUEST_LOCATION -> when (resultCode) {
                 Activity.RESULT_OK -> {
-                    callLocation()
+                    getLocation()
                     Toast.makeText(this@TasksActivity, "Location enabled!", Toast.LENGTH_SHORT).show()
                 }
                 Activity.RESULT_CANCELED -> {
@@ -203,7 +224,7 @@ class TasksActivity : AppCompatActivity(), OnMapReadyCallback {
                 if (grantResults.isNotEmpty()
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED
                 ) {
-                    callLocation()
+                    getLocation()
                     // permission was granted
                 } else {
                     // permission denied, boo! Disable the
