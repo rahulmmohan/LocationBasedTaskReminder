@@ -2,6 +2,10 @@ package com.task.locationbasedtaskreminder.views
 
 import android.Manifest
 import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
@@ -11,6 +15,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -29,6 +34,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.task.locationbasedtaskreminder.R
 import com.task.locationbasedtaskreminder.data.Task
 import com.task.locationbasedtaskreminder.helper.LocationService
+import com.task.locationbasedtaskreminder.helper.TaskActionReceiver
 import com.task.locationbasedtaskreminder.helper.isNearToCurrentLocation
 import com.task.locationbasedtaskreminder.viewmodel.GPSTrackerViewModel
 import com.task.locationbasedtaskreminder.viewmodel.TasksViewModel
@@ -124,7 +130,7 @@ class TasksActivity : AppCompatActivity(), OnMapReadyCallback {
                     val lon = task.longitude.toDoubleOrNull()
                     if (lat != null && lon != null) {
                         if (isNearToCurrentLocation(location.latitude, location.longitude, lat, lon)) {
-                            Toast.makeText(this@TasksActivity, "notiiii", Toast.LENGTH_LONG).show()
+                            showNotification(task)
                         }
                     }
                 }
@@ -139,6 +145,38 @@ class TasksActivity : AppCompatActivity(), OnMapReadyCallback {
             // Ask user to enable GPS/network in settings
             enableLocation()
         }
+    }
+
+    private fun showNotification(task: Task) {
+        val intentAction = Intent(this@TasksActivity, TaskActionReceiver::class.java).apply {
+            action = Intent.ACTION_ANSWER
+            putExtra("taskId", task.id)
+        }
+        val pendingIntent =
+            PendingIntent.getBroadcast(this@TasksActivity, 0, intentAction, PendingIntent.FLAG_UPDATE_CURRENT)
+        val builder = NotificationCompat.Builder(this, "1000")
+            .setSmallIcon(R.drawable.ic_event_note_red_600_24dp)
+            .setContentTitle(task.title)
+            .setContentText(task.place)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .addAction(R.drawable.ic_action_save, "Done", pendingIntent)
+            .setAutoCancel(true)
+
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "task"
+            val descriptionText = "showing task at current location"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel("1000", name, importance).apply {
+                description = descriptionText
+            }
+            // Register the channel with the system
+            notificationManager.createNotificationChannel(channel)
+        }
+        notificationManager.notify(task.id, builder.build())
+
+
     }
 
     private fun enableLocation() {

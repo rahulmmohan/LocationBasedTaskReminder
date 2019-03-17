@@ -1,9 +1,11 @@
 package com.task.locationbasedtaskreminder.helper
 
+import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.task.locationbasedtaskreminder.data.AppDatabase
+
 
 class TaskActionReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
@@ -12,5 +14,8 @@ class TaskActionReceiver : BroadcastReceiver() {
         val task = db.taskDao().getTask(taskId = taskId)
         task.isDone = true
         db.taskDao().update(task)
+
+        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        manager.cancel(taskId)
     }
 }

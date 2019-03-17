@@ -1,5 +1,7 @@
 package com.task.locationbasedtaskreminder.views
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -7,14 +9,20 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.Autocomplete
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.snackbar.Snackbar
 import com.task.locationbasedtaskreminder.R
 import com.task.locationbasedtaskreminder.viewmodel.TasksViewModel
 import kotlinx.android.synthetic.main.activity_compose_task.*
+import java.util.*
 
 class ComposeTaskActivity : AppCompatActivity() {
 
     private lateinit var taskViewModel: TasksViewModel
+    private var AUTOCOMPLETE_REQUEST_CODE = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +33,30 @@ class ComposeTaskActivity : AppCompatActivity() {
             it.title = "Create a new task"
         }
         taskViewModel = ViewModelProviders.of(this).get(TasksViewModel::class.java)
+        // Initialize Places.
+        Places.initialize(applicationContext, getString(R.string.google_maps_key))
 
+
+        val fields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
+        val intent = Autocomplete.IntentBuilder(
+            AutocompleteActivityMode.FULLSCREEN, fields
+        )
+            .build(this)
+        locationimageView.setOnClickListener {
+            startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                val place = Autocomplete.getPlaceFromIntent(data!!)
+                locationEditLayout.editText?.setText(place.name)
+                latitudeEditLayout.editText?.setText(place.latLng?.latitude.toString())
+                longitudeEditLayout.editText?.setText(place.latLng?.longitude.toString())
+
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -44,7 +75,7 @@ class ComposeTaskActivity : AppCompatActivity() {
 
     private fun saveNote() {
         val title = titleEditLayout.editText?.text.toString()
-        val location = LocationEditLayout.editText?.text.toString()
+        val location = locationEditLayout.editText?.text.toString()
         val lat = latitudeEditLayout.editText?.text.toString()
         val lon = longitudeEditLayout.editText?.text.toString()
         if (title.isEmpty() || location.isEmpty()) {

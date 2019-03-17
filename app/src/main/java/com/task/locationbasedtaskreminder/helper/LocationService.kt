@@ -35,6 +35,10 @@ class LocationService : LifecycleService() {
         mTimer.schedule(TimerTaskToGetLocation(), 5, 30000)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        mTimer.cancel()
+    }
 
     private fun getLocation() {
         if (taskViewModel.getAllTasks().hasObservers()) {
@@ -88,7 +92,7 @@ class LocationService : LifecycleService() {
             // Register the channel with the system
             notificationManager.createNotificationChannel(channel)
         }
-        notificationManager.notify(0, builder.build())
+        notificationManager.notify(task.id, builder.build())
 
 
     }
