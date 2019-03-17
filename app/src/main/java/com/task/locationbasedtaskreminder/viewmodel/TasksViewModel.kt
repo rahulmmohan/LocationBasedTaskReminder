@@ -9,7 +9,7 @@ import com.task.locationbasedtaskreminder.data.AppDatabase
 import com.task.locationbasedtaskreminder.data.Task
 
 class TasksViewModel(@NonNull application: Application) : AndroidViewModel(application) {
-    var db: AppDatabase = AppDatabase.getInstance(application.applicationContext)
+    private var db: AppDatabase = AppDatabase.getInstance(application.applicationContext)
 
     fun getAllTasks(): LiveData<List<Task>> {
         return db.taskDao().getAll()

@@ -2,7 +2,7 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/coordinator">
 
@@ -35,7 +35,7 @@
             <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Remind me to"/>
+                    android:hint="@string/remind_me_to"/>
         </com.google.android.material.textfield.TextInputLayout>
         <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="0dp"
@@ -43,22 +43,15 @@
                 android:layout_marginTop="16dp"
                 app:layout_constraintTop_toBottomOf="@+id/titleEditLayout" app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginStart="16dp"
-                android:id="@+id/locationEditLayout" app:layout_constraintEnd_toStartOf="@+id/locationimageView"
-                android:layout_marginEnd="8dp">
+                android:id="@+id/locationEditLayout"
+                android:layout_marginEnd="16dp" app:layout_constraintEnd_toEndOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="From Place"/>
+                    android:hint="@string/from_place"/>
         </com.google.android.material.textfield.TextInputLayout>
-        <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" app:srcCompat="@android:drawable/ic_menu_mylocation"
-                android:id="@+id/locationimageView" android:layout_weight="1"
-                app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="16dp"
-                app:layout_constraintTop_toTopOf="@+id/locationEditLayout"
-                app:layout_constraintBottom_toBottomOf="@+id/locationEditLayout"/>
-        <com.google.android.material.textfield.TextInputLayout
+               <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="16dp"
@@ -69,7 +62,7 @@
             <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Latitude"/>
+                    android:hint="@string/latitude"/>
         </com.google.android.material.textfield.TextInputLayout>
         <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="0dp"
@@ -82,7 +75,7 @@
             <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Logitude"/>
+                    android:hint="@string/longitude"/>
         </com.google.android.material.textfield.TextInputLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -98,43 +98,6 @@ class GPSTrackerViewModel(@NonNull application: Application) : AndroidViewModel(
     }
 
     /**
-     * Stop using GPS listener
-     * Calling this function will stop using GPS in your app
-     */
-
-    fun stopUsingGPS() {
-        if (locationManager != null) {
-            locationManager!!.removeUpdates(this@GPSTrackerViewModel)
-        }
-    }
-
-    /**
-     * Function to get latitude
-     */
-
-    fun getLatitude(): Double {
-        if (location.value != null) {
-            latitude = location.value!!.latitude
-        }
-
-        // return latitude
-        return latitude
-    }
-
-    /**
-     * Function to get longitude
-     */
-
-    fun getLongitude(): Double {
-        if (location.value != null) {
-            longitude = location.value!!.longitude
-        }
-
-        // return longitude
-        return longitude
-    }
-
-    /**
      * Function to check GPS/wifi enabled
      *
      * @return boolean

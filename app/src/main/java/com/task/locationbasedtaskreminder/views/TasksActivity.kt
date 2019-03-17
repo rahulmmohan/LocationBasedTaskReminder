@@ -87,7 +87,7 @@ class TasksActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         mMap?.let {
-            it.setMyLocationEnabled(true)
+            it.isMyLocationEnabled = true
             getTasks()
         }
     }
@@ -120,11 +120,9 @@ class TasksActivity : AppCompatActivity(), OnMapReadyCallback {
             if (location != null) {
                 Log.e("TaskActivity", "latitude -> ${location.latitude}")
                 Log.e("TaskActivity", "longitude -> ${location.longitude}")
-                mMap?.let {
-                    it.animateCamera(
-                        CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), 15.0f)
-                    )
-                }
+                mMap?.animateCamera(
+                    CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), 15.0f)
+                )
                 for (task in mAllTasks) {
                     val lat = task.latitude.toDoubleOrNull()
                     val lon = task.longitude.toDoubleOrNull()

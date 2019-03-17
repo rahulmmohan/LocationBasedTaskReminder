@@ -1,7 +1,13 @@
 <resources>
     <string name="app_name">LocationBasedTaskReminder</string>
-    <string name="title_activity_maps">Map</string>
     <string name="title_activity_main">My Tasks</string>
     <string name="discard">Discard changes?</string>
     <string name="error_empty">Fields can\'t be empty!</string>
+    <string name="compose_task_title">Create a new task</string>
+    <string name="error">Something went wrong!</string>
+    <string name="remind_me_to">Remind me to</string>
+    <string name="from_place">From Place</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+    <string name="save">Save</string>
 </resources>
